@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import ApiError from '../../../errors/ApiError';
 import prisma from '../../../shared/prisma';
 import { User } from '@prisma/client';
-import { ILoginResponse } from '../../../interfaces/common';
 import config from '../../../config';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import { Secret } from 'jsonwebtoken';
@@ -26,7 +25,7 @@ const signUp = async (data: User): Promise<User | null> => {
 // signIn
 const signIn = async (
   payload: Pick<User, 'email' | 'password'>
-): Promise<ILoginResponse> => {
+): Promise<string> => {
   const { email, password } = payload;
 
   const isUserExist = await prisma.user.findUnique({
@@ -47,22 +46,13 @@ const signIn = async (
   }
   // create access token and refresh token
   const { id, role } = isUserExist;
-  const accessToken = jwtHelpers.createToken(
+  const token = jwtHelpers.createToken(
     { id, role },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string
   );
 
-  const refreshToken = jwtHelpers.createToken(
-    { id, role },
-    config.jwt.refresh_secret as Secret,
-    config.jwt.refresh_expires_in as string
-  );
-
-  return {
-    accessToken,
-    refreshToken,
-  };
+  return token;
 };
 
 export const AuthService = {
