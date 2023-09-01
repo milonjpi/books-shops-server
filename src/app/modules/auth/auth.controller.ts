@@ -5,6 +5,8 @@ import httpStatus from 'http-status';
 import { AuthService } from './auth.service';
 import { User } from '@prisma/client';
 
+
+// signup
 const signUp = catchAsync(async (req: Request, res: Response) => {
   const data = req.body;
 
