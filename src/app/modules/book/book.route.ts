@@ -20,6 +20,9 @@ router.get('/', BookController.getAllBooks);
 // get single book
 router.get('/:id', BookController.getSingleBook);
 
+// get books by category id
+router.get('/:id/category', BookController.getBooksByCategoryId);
+
 // update single book
 router.patch(
   '/:id',
