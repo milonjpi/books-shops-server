@@ -7,8 +7,9 @@ import { Order } from '@prisma/client';
 
 // create order
 const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const data = req.body;
-
+  const user = req.user;
+  const data = { ...req.body, userId: user?.id };
+  
   const result = await OrderService.createOrder(data);
   if (result) {
     sendResponse<Order>(res, {
