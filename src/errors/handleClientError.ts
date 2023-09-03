@@ -7,23 +7,38 @@ const handleClientError = (error: Prisma.PrismaClientKnownRequestError) => {
   const statusCode = 400;
 
   if (error.code === 'P2025') {
-    message = (error.meta?.cause as string) || "Record not found!"
+    message = (error.meta?.cause as string) || 'Record not found!';
     errors = [
       {
-        path: "",
-        message
-      }
-    ]
-  }
-  else if (error.code === 'P2003') {
+        path: '',
+        message,
+      },
+    ];
+  } else if (error.code === 'P2002') {
+    message = 'Already Added';
+    errors = [
+      {
+        path: '',
+        message,
+      },
+    ];
+  } else if (error.code === 'P2003') {
     if (error.message.includes('delete()` invocation:')) {
-      message = "Delete failed"
+      message = 'Delete failed';
       errors = [
         {
-          path: "",
-          message
-        }
-      ]
+          path: '',
+          message,
+        },
+      ];
+    } else if (error.message.includes('Foreign key constraint failed')) {
+      message = 'Foreign key constraint failed';
+      errors = [
+        {
+          path: '',
+          message,
+        },
+      ];
     }
   }
 
