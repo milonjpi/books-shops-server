@@ -10,6 +10,7 @@ const router = express.Router();
 // create book
 router.post(
   '/create-book',
+  auth(ENUM_USER_ROLE.ADMIN),
   validateRequest(BookValidation.create),
   BookController.createBook
 );
