@@ -2,6 +2,8 @@ import express from 'express';
 import validateRequest from '../../middlewares/validateRequest';
 import { BookValidation } from './book.validation';
 import { BookController } from './book.controller';
+import auth from '../../middlewares/auth';
+import { ENUM_USER_ROLE } from '../../../enums/user';
 
 const router = express.Router();
 
@@ -21,11 +23,16 @@ router.get('/:id', BookController.getSingleBook);
 // update single book
 router.patch(
   '/:id',
+  auth(ENUM_USER_ROLE.ADMIN),
   validateRequest(BookValidation.update),
   BookController.updateSingleBook
 );
 
 // delete single book
-router.delete('/:id', BookController.deleteSingleBook);
+router.delete(
+  '/:id',
+  auth(ENUM_USER_ROLE.ADMIN),
+  BookController.deleteSingleBook
+);
 
 export const BookRoutes = router;

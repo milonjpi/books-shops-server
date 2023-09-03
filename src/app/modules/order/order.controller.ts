@@ -4,12 +4,13 @@ import sendResponse from '../../../shared/sendResponse';
 import httpStatus from 'http-status';
 import { OrderService } from './order.service';
 import { Order } from '@prisma/client';
+import { JwtPayload } from 'jsonwebtoken';
 
 // create order
 const createOrder = catchAsync(async (req: Request, res: Response) => {
   const user = req.user;
   const data = { ...req.body, userId: user?.id };
-  
+
   const result = await OrderService.createOrder(data);
   if (result) {
     sendResponse<Order>(res, {
@@ -23,7 +24,8 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
 
 // get all orders
 const getAllOrders = catchAsync(async (req: Request, res: Response) => {
-  const result = await OrderService.getAllOrders();
+  const user = req.user as JwtPayload;
+  const result = await OrderService.getAllOrders(user);
 
   sendResponse<Order[]>(res, {
     statusCode: httpStatus.OK,
@@ -36,8 +38,8 @@ const getAllOrders = catchAsync(async (req: Request, res: Response) => {
 // get single order
 const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
   const id = req.params.id;
-
-  const result = await OrderService.getSingleOrder(id);
+  const user = req.user as JwtPayload;
+  const result = await OrderService.getSingleOrder(id, user);
 
   sendResponse<Order>(res, {
     statusCode: httpStatus.OK,
@@ -47,23 +49,8 @@ const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-// delete single order
-const deleteSingleOrder = catchAsync(async (req: Request, res: Response) => {
-  const id = req.params.id;
-
-  const result = await OrderService.deleteSingleOrder(id);
-
-  sendResponse<Order>(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Order deleted successfully',
-    data: result,
-  });
-});
-
 export const OrderController = {
   createOrder,
   getAllOrders,
   getSingleOrder,
-  deleteSingleOrder,
 };
